@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import API from "../api/axiosConfig";
-import type { FormSchema } from "../types/form";
+import type { FormSchema, Mode, SubmissionData } from "../types/form";
 
 const useQueryParams = () => new URLSearchParams(window.location.search);
 
