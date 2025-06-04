@@ -11,9 +11,11 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@types/joi": "^17.2.2",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "joi": "^17.13.3",
     "mongoose": "^8.15.1",
     "uuid": "^11.1.0"
   },

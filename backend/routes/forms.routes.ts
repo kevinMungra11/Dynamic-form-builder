@@ -8,9 +8,12 @@ import {
 
 const router = express.Router();
 
-router.get("/forms", getAllForms);
-router.post("/form", createForm);
-router.patch("/form/:id", editForm);
-router.delete("/form/:id", deleteForm);
+router.get("/", getAllForms);
+
+router.post("/", createForm);
+
+router.patch("/:id", editForm);
+
+router.delete("/:id", deleteForm);
 
 export default router;
