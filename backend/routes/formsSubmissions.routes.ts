@@ -10,7 +10,7 @@ const router = express.Router();
 
 router.post("/:formId", createSubmission);
 
-router.get("/:formId/", getSubmissionsByForm);
+router.get("/:formId", getSubmissionsByForm);
 
 router.get("/:submissionId", getSubmissionById);
 

@@ -2,6 +2,7 @@ import Joi from "joi";
 
 export const submissionValidationSchema = Joi.object({
   _id: Joi.string(),
+  formId: Joi.string(),
   firstName: Joi.string().min(1).required(),
   lastName: Joi.string().min(1).required(),
   responses: Joi.object()
