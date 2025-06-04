@@ -4,11 +4,14 @@ import {
   deleteForm,
   editForm,
   getAllForms,
+  getFormById,
 } from "../controllers/forms.controller";
 
 const router = express.Router();
 
 router.get("/", getAllForms);
+
+router.get("/:id", getFormById);
 
 router.post("/", createForm);
 

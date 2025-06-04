@@ -43,6 +43,23 @@ export const getAllForms = async (req: Request, res: Response) => {
   }
 };
 
+export const getFormById = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    const form = await Form.findById(id);
+
+    if (!form) {
+      return res.status(404).json({ message: "Form not found" });
+    }
+
+    return res.status(200).json(form);
+  } catch (error: any) {
+    console.log(error.message);
+    return res.status(500).json({ message: "Something went wrong!" });
+  }
+};
+
 export const editForm = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
