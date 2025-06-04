@@ -63,6 +63,7 @@ const FormList: React.FC = () => {
         setFormToDelete(null);
         const nextPage = forms.length === 1 && page > 1 ? page - 1 : page;
         setPage(nextPage);
+        fetchForms();
       } catch {
         setError("Failed to delete form. Please try again.");
       }
