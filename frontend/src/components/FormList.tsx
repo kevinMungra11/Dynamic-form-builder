@@ -88,7 +88,7 @@ const FormList: React.FC = () => {
   };
 
   const handleViewClick = (formId: string) => {
-    navigate(`/forms/view/${formId}`);
+    navigate(`/forms/${formId}/view`);
   };
 
   const handleEditClick = (formId: string) => {

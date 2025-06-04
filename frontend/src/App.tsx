@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import FormList from "./components/FormList";
 import CreateForm from "./components/CreateForm";
+import ViewForm from "./components/ViewForm";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
           <Routes>
             <Route path="/create" element={<CreateForm />} />
             <Route path="/forms/:formId/edit" element={<CreateForm />} />
+            <Route path="/forms/:formId/view" element={<ViewForm />} />
             <Route path="/forms" element={<FormList />} />
             <Route path="/" element={<FormList />} />
           </Routes>
