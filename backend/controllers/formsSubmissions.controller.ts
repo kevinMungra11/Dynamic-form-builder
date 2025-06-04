@@ -30,7 +30,7 @@ export const createSubmission = async (req: Request, res: Response) => {
   }
 };
 
-export const getSubmissionsByForm = async (req: Request, res: Response) => {
+export const getSubmissionsByFormId = async (req: Request, res: Response) => {
   try {
     const { formId } = req.params;
     const page = parseInt(req.query.page as string) || 1;
