@@ -1,34 +1,14 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, type FC } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../api/axiosConfig";
+import type {
+  FormItem,
+  FormListProps,
+  FormsApiResponse,
+  SubmissionItem,
+} from "../types/form";
 
-interface FormItem {
-  _id: string;
-  title: string;
-  createdAt: string;
-  data: any[];
-}
-
-interface SubmissionItem {
-  _id: string;
-  formTitle: string;
-  submittedAt: string;
-  data: any;
-}
-
-interface FormsApiResponse {
-  data: FormItem[] | SubmissionItem[];
-  limit: number;
-  page: number;
-  total: number;
-  totalPages: number;
-}
-
-interface FormListProps {
-  mode?: "created" | "submitted";
-}
-
-const FormList: React.FC<FormListProps> = ({ mode = "created" }) => {
+const FormList: FC<FormListProps> = ({ mode = "created" }) => {
   const [forms, setForms] = useState<FormItem[] | SubmissionItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");

@@ -2,30 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import API from "../api/axiosConfig";
-
-interface Field {
-  label: string;
-  type: "text" | "checkbox";
-  required: boolean;
-}
-
-interface FormSchema {
-  _id: string;
-  title: string;
-  fields: Field[];
-  createdAt: string;
-}
-
-interface SubmissionData {
-  _id: string;
-  formId: string;
-  firstName: string;
-  lastName: string;
-  responses: Record<string, string | boolean>;
-  createdAt: string;
-}
-
-type Mode = "view" | "fill" | "filled";
+import type { FormSchema } from "../types/form";
 
 const useQueryParams = () => new URLSearchParams(window.location.search);
 

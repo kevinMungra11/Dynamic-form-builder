@@ -55,9 +55,7 @@ function App() {
 
         <footer className="bg-dark text-light py-3 mt-auto">
           <div className="container text-center">
-            <small>
-              © {new Date().getFullYear()} Dynamic Form Builder 🚀 | Built by K'
-            </small>
+            <small>© {new Date().getFullYear()} Dynamic Form Builder 🚀</small>
           </div>
         </footer>
       </div>

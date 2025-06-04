@@ -1,20 +1,8 @@
 import { useState, useEffect, type ChangeEvent, type FormEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
+import { type Field, type ApiResponse } from "../types/form";
 import API from "../api/axiosConfig";
-
-interface Field {
-  label: string;
-  type: "text" | "checkbox";
-  required: boolean;
-}
-
-interface ApiResponse {
-  _id: string;
-  title: string;
-  fields: Field[];
-  createdAt: string;
-}
 
 function CreateForm() {
   const [title, setTitle] = useState<string>("");
