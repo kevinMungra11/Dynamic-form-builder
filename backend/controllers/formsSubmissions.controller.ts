@@ -55,6 +55,28 @@ export const getSubmissionsByFormId = async (req: Request, res: Response) => {
   }
 };
 
+export const getAllSubmissions = async (req: Request, res: Response) => {
+  try {
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const skip = (page - 1) * limit;
+
+    const total = await FormSubmission.countDocuments();
+    const submissions = await FormSubmission.find().skip(skip).limit(limit);
+
+    return res.status(200).json({
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+      data: submissions,
+    });
+  } catch (error: any) {
+    console.error(error.message);
+    return res.status(500).json({ message: "Something went wrong!" });
+  }
+};
+
 export const getSubmissionById = async (req: Request, res: Response) => {
   try {
     const { submissionId } = req.params;

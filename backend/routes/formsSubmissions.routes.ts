@@ -4,9 +4,12 @@ import {
   getSubmissionById,
   deleteSubmission,
   getSubmissionsByFormId,
+  getAllSubmissions,
 } from "../controllers/formsSubmissions.controller";
 
 const router = express.Router();
+
+router.get("/", getAllSubmissions);
 
 router.post("/:formId", createSubmission);
 
