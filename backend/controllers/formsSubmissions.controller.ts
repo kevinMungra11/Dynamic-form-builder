@@ -62,7 +62,12 @@ export const getAllSubmissions = async (req: Request, res: Response) => {
     const skip = (page - 1) * limit;
 
     const total = await FormSubmission.countDocuments();
-    const submissions = await FormSubmission.find().skip(skip).limit(limit);
+
+    const submissions: any = await FormSubmission.find()
+      .skip(skip)
+      .limit(limit)
+      .populate("formId", "title")
+      .lean();
 
     return res.status(200).json({
       page,
