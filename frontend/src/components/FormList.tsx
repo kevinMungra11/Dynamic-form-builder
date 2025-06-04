@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../api/axiosConfig";
+
 interface FormItem {
   _id: string;
   title: string;
@@ -8,16 +9,27 @@ interface FormItem {
   data: any[];
 }
 
+interface SubmissionItem {
+  _id: string;
+  formTitle: string;
+  submittedAt: string;
+  data: any;
+}
+
 interface FormsApiResponse {
-  data: FormItem[];
+  data: FormItem[] | SubmissionItem[];
   limit: number;
   page: number;
   total: number;
   totalPages: number;
 }
 
-const FormList: React.FC = () => {
-  const [forms, setForms] = useState<FormItem[]>([]);
+interface FormListProps {
+  mode?: "created" | "submitted";
+}
+
+const FormList: React.FC<FormListProps> = ({ mode = "created" }) => {
+  const [forms, setForms] = useState<FormItem[] | SubmissionItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
@@ -34,21 +46,27 @@ const FormList: React.FC = () => {
   const fetchForms = async (currentPage = page) => {
     setLoading(true);
     try {
-      const response = await API.get<FormsApiResponse>(
-        `/forms?page=${currentPage}`
-      );
+      const endpoint =
+        mode === "submitted"
+          ? `/submission?page=${currentPage}`
+          : `/forms?page=${currentPage}`;
+      const response = await API.get<FormsApiResponse>(endpoint);
       setForms(response.data.data);
       setTotalPages(response.data.totalPages);
       setLoading(false);
     } catch {
-      setError("Failed to fetch forms. Backend might be down.");
+      setError(
+        `Failed to fetch ${
+          mode === "submitted" ? "submitted forms" : "forms"
+        }. Backend might be down.`
+      );
       setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchForms();
-  }, [page]);
+  }, [page, mode]);
 
   const handleDeleteClick = (form: FormItem) => {
     setFormToDelete(form);
@@ -87,8 +105,12 @@ const FormList: React.FC = () => {
     }
   };
 
-  const handleViewClick = (formId: string) => {
-    navigate(`/forms/${formId}/view`);
+  const handleViewClick = (id: string) => {
+    if (mode === "submitted") {
+      navigate(`/forms/submission/${id}`);
+    } else {
+      navigate(`/forms/${id}/view`);
+    }
   };
 
   const handleEditClick = (formId: string) => {
@@ -130,7 +152,9 @@ const FormList: React.FC = () => {
         <div className="spinner-border text-primary" role="status">
           <span className="visually-hidden">Loading...</span>
         </div>
-        <p className="mt-2">Loading forms...</p>
+        <p className="mt-2">
+          Loading {mode === "submitted" ? "submissions" : "forms"}...
+        </p>
       </div>
     );
   }
@@ -145,24 +169,38 @@ const FormList: React.FC = () => {
 
   return (
     <div className="container mt-4">
-      <h2 className="mb-4 text-center">All Created Forms</h2>
+      <h2 className="mb-4 text-center">
+        {mode === "submitted" ? "Submitted Forms" : "All Created Forms"}
+      </h2>
+
       {forms.length === 0 ? (
         <div className="alert alert-info text-center" role="alert">
-          No forms created yet. Go to "Create New Form" to get started!
+          {mode === "submitted"
+            ? "No submissions yet."
+            : 'No forms created yet. Go to "Create New Form" to get started!'}
         </div>
       ) : (
         <>
           <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-            {forms.map((form) => (
+            {forms.map((form: any) => (
               <div key={form._id} className="col">
                 <div className="card h-100 shadow-sm rounded border-dark">
                   <div className="card-body d-flex flex-column justify-content-between">
                     <div>
-                      <h5 className="card-title text-dark">{form.title}</h5>
+                      <h5 className="card-title text-dark">
+                        {mode === "submitted" ? form.formTitle : form.title}
+                      </h5>
                       <p className="card-text">
                         <small className="text-muted">
-                          Created on:{" "}
-                          {new Date(form.createdAt).toLocaleDateString()}
+                          {mode === "submitted"
+                            ? `Submitted by: ${form.firstName ?? ""} ${
+                                form.lastName ?? ""
+                              } on ${new Date(
+                                form.createdAt
+                              ).toLocaleDateString()}`
+                            : `Created on: ${new Date(
+                                form.createdAt
+                              ).toLocaleDateString()}`}
                         </small>
                       </p>
                     </div>
@@ -171,35 +209,42 @@ const FormList: React.FC = () => {
                         onClick={() => handleViewClick(form._id)}
                         className="btn btn-outline-primary btn-sm"
                       >
-                        View
+                        {mode === "submitted" ? "View Submission" : "View"}
                       </button>
-                      <button
-                        onClick={() => handleFillClick(form)}
-                        className="btn btn-outline-success btn-sm"
-                      >
-                        Fill
-                      </button>
-                      <button
-                        onClick={() => handleEditClick(form._id)}
-                        className="btn btn-outline-secondary btn-sm"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDeleteClick(form)}
-                        className="btn btn-outline-danger btn-sm"
-                      >
-                        Delete
-                      </button>
+
+                      {mode === "created" && (
+                        <>
+                          <button
+                            onClick={() => handleFillClick(form)}
+                            className="btn btn-outline-success btn-sm"
+                          >
+                            Fill
+                          </button>
+                          <button
+                            onClick={() => handleEditClick(form._id)}
+                            className="btn btn-outline-secondary btn-sm"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDeleteClick(form)}
+                            className="btn btn-outline-danger btn-sm"
+                          >
+                            Delete
+                          </button>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
               </div>
             ))}
           </div>
+
           {renderPagination()}
         </>
       )}
+
       {showDeleteModal && (
         <div
           className="modal fade show d-block"
@@ -242,6 +287,7 @@ const FormList: React.FC = () => {
           </div>
         </div>
       )}
+
       {showFillModal && (
         <div
           className="modal fade show d-block"
