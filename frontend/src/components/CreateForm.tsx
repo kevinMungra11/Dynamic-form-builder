@@ -1,6 +1,6 @@
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify"; // Import toast and ToastContainer
+import { toast, ToastContainer } from "react-toastify";
 import API from "../api/axiosConfig";
 
 interface Field {
@@ -21,20 +21,17 @@ function CreateForm() {
   const [fields, setFields] = useState<Field[]>([]);
   const navigate = useNavigate();
 
-  // Adds a new field of the specified type to the form
   const addField = (type: "text" | "checkbox"): void => {
     setFields([...fields, { label: "", type: type, required: false }]);
     toast.info(`Added a new ${type} field.`);
   };
 
-  // Removes a field at a given index
   const removeField = (index: number): void => {
     const newFields = fields.filter((_, i) => i !== index);
     setFields(newFields);
     toast.warn("Field removed.");
   };
 
-  // Handles changes to a field's label or required status
   const handleFieldChange = (
     index: number,
     event: ChangeEvent<HTMLInputElement>
@@ -49,7 +46,6 @@ function CreateForm() {
     setFields(newFields);
   };
 
-  // Handles form submission to create a new form
   const handleSubmit = async (e: FormEvent): Promise<void> => {
     e.preventDefault();
 
@@ -70,8 +66,8 @@ function CreateForm() {
     try {
       const response = await API.post<ApiResponse>("/forms", { title, fields });
       toast.success("Form created successfully!");
-      setTitle(""); // Clear form
-      setFields([]); // Clear fields
+      setTitle("");
+      setFields([]);
       setTimeout(() => navigate(`/forms/${response.data._id}`), 1500);
     } catch (error: any) {
       console.error(
@@ -87,11 +83,7 @@ function CreateForm() {
 
   return (
     <div className="container my-5">
-      {" "}
-      {/* Increased top/bottom margin */}
-      <h2 className="mb-4 text-center text-primary">Create New Form</h2>{" "}
-      {/* Added text-primary */}
-      {/* ToastContainer for displaying notifications */}
+      <h2 className="mb-4 text-center text-primary">Create New Form</h2>
       <ToastContainer
         position="top-right"
         autoClose={3000}
@@ -107,15 +99,8 @@ function CreateForm() {
         onSubmit={handleSubmit}
         className="p-4 border rounded shadow-sm bg-light"
       >
-        {" "}
-        {/* Added padding, border, shadow, background */}
-        {/* Form Title Input */}
         <div className="mb-4">
-          {" "}
-          {/* Increased bottom margin */}
           <label htmlFor="formTitle" className="form-label fs-5 text-dark">
-            {" "}
-            {/* Increased font size, added text-dark */}
             Form Title:
           </label>
           <input
@@ -126,19 +111,15 @@ function CreateForm() {
               setTitle(e.target.value)
             }
             required
-            className="form-control form-control-lg" // Larger input field
+            className="form-control form-control-lg"
             placeholder="e.g., Customer Feedback Survey"
           />
         </div>
         <h3 className="mt-5 mb-4 text-center text-secondary border-bottom pb-2">
           Form Fields
-        </h3>{" "}
-        {/* Styled heading */}
-        {/* Display dynamically added fields */}
+        </h3>
         {fields.length === 0 && (
           <p className="text-muted text-center py-3 border rounded bg-white">
-            {" "}
-            {/* Added padding, border, background */}
             No fields added yet. Click a button below to add one!
           </p>
         )}
@@ -172,8 +153,6 @@ function CreateForm() {
               </div>
               <div className="d-flex align-items-center me-md-3 mb-2 mb-md-0">
                 <span className="badge bg-primary text-white me-2 py-2 px-3">
-                  {" "}
-                  {/* Styled type display */}
                   {field.type === "text" ? "Text Input" : "Checkbox"}
                 </span>
               </div>
@@ -198,21 +177,18 @@ function CreateForm() {
               <button
                 type="button"
                 onClick={() => removeField(index)}
-                className="btn btn-outline-danger btn-sm mt-2 mt-md-0" // Adjusted margin for small screens
+                className="btn btn-outline-danger btn-sm mt-2 mt-md-0"
               >
                 Remove
               </button>
             </div>
           ))}
         </div>
-        {/* Buttons to add new field types */}
         <div className="d-flex justify-content-center gap-3 mb-5">
-          {" "}
-          {/* Increased bottom margin */}
           <button
             type="button"
             onClick={() => addField("text")}
-            className="btn btn-info btn-lg flex-grow-1" // Larger buttons, grow to fill space
+            className="btn btn-info btn-lg flex-grow-1"
           >
             <i className="bi bi-input-text me-2"></i> Add Text Input
           </button>
@@ -224,7 +200,6 @@ function CreateForm() {
             <i className="bi bi-check-square me-2"></i> Add Checkbox
           </button>
         </div>
-        {/* Submit button for the form creation */}
         <div className="d-grid gap-2">
           <button type="submit" className="btn btn-success btn-lg">
             <i className="bi bi-plus-circle me-2"></i> Create Form
