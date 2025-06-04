@@ -1,5 +1,5 @@
-import { useState, type ChangeEvent, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect, type ChangeEvent, type FormEvent } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import API from "../api/axiosConfig";
 
@@ -19,7 +19,25 @@ interface ApiResponse {
 function CreateForm() {
   const [title, setTitle] = useState<string>("");
   const [fields, setFields] = useState<Field[]>([]);
+  const { formId } = useParams();
+  const isEditMode = Boolean(formId);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchForm = async () => {
+      try {
+        const res = await API.get<ApiResponse>(`/forms/${formId}`);
+        setTitle(res.data.title);
+        setFields(res.data.fields);
+      } catch (error: any) {
+        toast.error("Failed to load form data.");
+        console.error(error);
+      }
+    };
+    if (isEditMode) {
+      fetchForm();
+    }
+  }, [formId]);
 
   const addField = (type: "text" | "checkbox"): void => {
     setFields([...fields, { label: "", type: type, required: false }]);
@@ -36,7 +54,7 @@ function CreateForm() {
     index: number,
     event: ChangeEvent<HTMLInputElement>
   ): void => {
-    const { name, value, type, checked } = event.target;
+    const { name, value, checked } = event.target;
     const newFields = [...fields];
     if (name === "label") {
       newFields[index].label = value;
@@ -64,37 +82,35 @@ function CreateForm() {
     }
 
     try {
-      const response = await API.post<ApiResponse>("/forms", { title, fields });
-      toast.success("Form created successfully!");
-      setTitle("");
-      setFields([]);
-      setTimeout(() => navigate(`/forms/${response.data._id}`), 1500);
+      if (isEditMode) {
+        await API.patch(`/forms/${formId}`, { title, fields });
+        toast.success("Form updated successfully!");
+        setTimeout(() => navigate(`/`), 1500);
+      } else {
+        await API.post<ApiResponse>("/forms", {
+          title,
+          fields,
+        });
+        toast.success("Form created successfully!");
+        setTitle("");
+        setFields([]);
+        setTimeout(() => navigate(`/`), 1500);
+      }
     } catch (error: any) {
       console.error(
-        "Error creating form:",
+        "Form submission error:",
         error.response?.data || error.message
       );
-      toast.error(
-        error.response?.data?.message ||
-          "Failed to create form. Please try again."
-      );
+      toast.error(error.response?.data?.message || "Something went wrong.");
     }
   };
 
   return (
     <div className="container my-5">
-      <h2 className="mb-4 text-center text-primary">Create New Form</h2>
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
+      <h2 className="mb-4 text-center text-primary">
+        {isEditMode ? "Edit Form" : "Create New Form"}
+      </h2>
+      <ToastContainer position="top-right" autoClose={3000} />
       <form
         onSubmit={handleSubmit}
         className="p-4 border rounded shadow-sm bg-light"
@@ -115,19 +131,22 @@ function CreateForm() {
             placeholder="e.g., Customer Feedback Survey"
           />
         </div>
+
         <h3 className="mt-5 mb-4 text-center text-secondary border-bottom pb-2">
           Form Fields
         </h3>
+
         {fields.length === 0 && (
           <p className="text-muted text-center py-3 border rounded bg-white">
             No fields added yet. Click a button below to add one!
           </p>
         )}
+
         <div className="list-group mb-4">
           {fields.map((field, index) => (
             <div
               key={index}
-              className="list-group-item d-flex flex-column flex-md-row align-items-md-center justify-content-between p-3 mb-3 shadow-sm rounded-lg border" // Enhanced styling
+              className="list-group-item d-flex flex-column flex-md-row align-items-md-center justify-content-between p-3 mb-3 shadow-sm rounded-lg border"
             >
               <div className="flex-grow-1 me-md-3 mb-2 mb-md-0">
                 <label
@@ -141,9 +160,7 @@ function CreateForm() {
                   id={`fieldLabel-${index}`}
                   name="label"
                   value={field.label}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                    handleFieldChange(index, e)
-                  }
+                  onChange={(e) => handleFieldChange(index, e)}
                   placeholder={`Enter label for ${
                     field.type === "text" ? "Text Input" : "Checkbox"
                   } field`}
@@ -151,11 +168,13 @@ function CreateForm() {
                   className="form-control"
                 />
               </div>
+
               <div className="d-flex align-items-center me-md-3 mb-2 mb-md-0">
                 <span className="badge bg-primary text-white me-2 py-2 px-3">
                   {field.type === "text" ? "Text Input" : "Checkbox"}
                 </span>
               </div>
+
               <div className="form-check form-switch me-md-3 mb-2 mb-md-0 d-flex align-items-center">
                 <input
                   className="form-check-input"
@@ -163,9 +182,7 @@ function CreateForm() {
                   id={`requiredSwitch-${index}`}
                   name="required"
                   checked={field.required}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                    handleFieldChange(index, e)
-                  }
+                  onChange={(e) => handleFieldChange(index, e)}
                 />
                 <label
                   className="form-check-label ms-2 text-dark"
@@ -174,6 +191,7 @@ function CreateForm() {
                   Required
                 </label>
               </div>
+
               <button
                 type="button"
                 onClick={() => removeField(index)}
@@ -184,6 +202,7 @@ function CreateForm() {
             </div>
           ))}
         </div>
+
         <div className="d-flex justify-content-center gap-3 mb-5">
           <button
             type="button"
@@ -200,9 +219,11 @@ function CreateForm() {
             <i className="bi bi-check-square me-2"></i> Add Checkbox
           </button>
         </div>
+
         <div className="d-grid gap-2">
           <button type="submit" className="btn btn-success btn-lg">
-            <i className="bi bi-plus-circle me-2"></i> Create Form
+            <i className="bi bi-plus-circle me-2"></i>{" "}
+            {isEditMode ? "Update Form" : "Create Form"}
           </button>
         </div>
       </form>

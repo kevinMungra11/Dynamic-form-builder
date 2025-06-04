@@ -31,6 +31,7 @@ function App() {
         <div className="container mt-4">
           <Routes>
             <Route path="/create" element={<CreateForm />} />
+            <Route path="/forms/:formId/edit" element={<CreateForm />} />
             <Route path="/forms" element={<FormList />} />
             <Route path="/" element={<FormList />} />
           </Routes>

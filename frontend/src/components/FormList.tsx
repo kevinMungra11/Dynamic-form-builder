@@ -91,7 +91,7 @@ const FormList: React.FC = () => {
   };
 
   const handleEditClick = (formId: string) => {
-    navigate(`/forms/edit/${formId}`);
+    navigate(`/forms/${formId}/edit`);
   };
 
   const renderPagination = () => {
