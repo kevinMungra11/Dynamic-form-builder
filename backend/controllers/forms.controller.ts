@@ -55,3 +55,19 @@ export const editForm = async (req: Request, res: Response) => {
     return res.status(500).json({ message: "Something went wrong!" });
   }
 };
+
+export const deleteForm = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const deletedForm = await Form.findByIdAndDelete(id);
+
+    if (!deletedForm) {
+      return res.status(404).json({ message: "Form not found" });
+    }
+
+    return res.status(200).json({ message: "Form deleted successfully" });
+  } catch (error: any) {
+    console.log(error.message);
+    return res.status(500).json({ message: "Something went wrong!" });
+  }
+};
