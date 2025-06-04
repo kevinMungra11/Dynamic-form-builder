@@ -15,7 +15,7 @@ const FormSchema = new mongoose.Schema(
   {
     _id: {
       type: String,
-      default: uuid(),
+      default: () => uuid(),
     },
     title: { type: String, required: true },
     fields: { type: [FieldSchema], required: true },
