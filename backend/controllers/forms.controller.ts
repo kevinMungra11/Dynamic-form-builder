@@ -52,7 +52,6 @@ export const getFormById = async (req: Request, res: Response) => {
     if (!form) {
       res.status(404).json({ message: "Form not found" });
     }
-    console.log(form);
     res.status(200).json(form);
   } catch (error: any) {
     console.log(error.message);

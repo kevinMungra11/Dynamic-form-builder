@@ -153,7 +153,7 @@ const FormList: FC<FormListProps> = ({ mode = "created" }) => {
         {mode === "submitted" ? "Submitted Forms" : "All Created Forms"}
       </h2>
 
-      {forms.length === 0 ? (
+      {forms?.length === 0 ? (
         <div className="alert alert-info text-center" role="alert">
           {mode === "submitted"
             ? "No submissions yet."
@@ -162,63 +162,66 @@ const FormList: FC<FormListProps> = ({ mode = "created" }) => {
       ) : (
         <>
           <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-            {forms.map((form: any) => (
-              <div key={form._id} className="col">
-                <div className="card h-100 shadow-sm rounded border-dark">
-                  <div className="card-body d-flex flex-column justify-content-between">
-                    <div>
-                      <h5 className="card-title text-dark">
-                        {mode === "submitted" ? form.formId.title : form.title}
-                      </h5>
-                      <p className="card-text">
-                        <small className="text-muted">
+            {forms?.length &&
+              forms.map((form: any) => (
+                <div key={form._id} className="col">
+                  <div className="card h-100 shadow-sm rounded border-dark">
+                    <div className="card-body d-flex flex-column justify-content-between">
+                      <div>
+                        <h5 className="card-title text-dark">
                           {mode === "submitted"
-                            ? `Submitted by: ${form.firstName ?? ""} ${
-                                form.lastName ?? ""
-                              } on ${new Date(
-                                form.createdAt
-                              ).toLocaleDateString()}`
-                            : `Created on: ${new Date(
-                                form.createdAt
-                              ).toLocaleDateString()}`}
-                        </small>
-                      </p>
-                    </div>
-                    <div className="d-flex flex-wrap justify-content-end gap-2 mt-3">
-                      <button
-                        onClick={() => handleViewClick(form._id)}
-                        className="btn btn-outline-primary btn-sm"
-                      >
-                        {mode === "submitted" ? "View Submission" : "View"}
-                      </button>
+                            ? form.formId.title
+                            : form.title}
+                        </h5>
+                        <p className="card-text">
+                          <small className="text-muted">
+                            {mode === "submitted"
+                              ? `Submitted by: ${form.firstName ?? ""} ${
+                                  form.lastName ?? ""
+                                } on ${new Date(
+                                  form.createdAt
+                                ).toLocaleDateString()}`
+                              : `Created on: ${new Date(
+                                  form.createdAt
+                                ).toLocaleDateString()}`}
+                          </small>
+                        </p>
+                      </div>
+                      <div className="d-flex flex-wrap justify-content-end gap-2 mt-3">
+                        <button
+                          onClick={() => handleViewClick(form._id)}
+                          className="btn btn-outline-primary btn-sm"
+                        >
+                          {mode === "submitted" ? "View Submission" : "View"}
+                        </button>
 
-                      {mode === "created" && (
-                        <>
-                          <button
-                            onClick={() => handleFillClick(form)}
-                            className="btn btn-outline-success btn-sm"
-                          >
-                            Fill
-                          </button>
-                          <button
-                            onClick={() => handleEditClick(form._id)}
-                            className="btn btn-outline-secondary btn-sm"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => handleDeleteClick(form)}
-                            className="btn btn-outline-danger btn-sm"
-                          >
-                            Delete
-                          </button>
-                        </>
-                      )}
+                        {mode === "created" && (
+                          <>
+                            <button
+                              onClick={() => handleFillClick(form)}
+                              className="btn btn-outline-success btn-sm"
+                            >
+                              Fill
+                            </button>
+                            <button
+                              onClick={() => handleEditClick(form._id)}
+                              className="btn btn-outline-secondary btn-sm"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteClick(form)}
+                              className="btn btn-outline-danger btn-sm"
+                            >
+                              Delete
+                            </button>
+                          </>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
 
           {renderPagination()}
