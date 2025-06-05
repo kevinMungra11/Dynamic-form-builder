@@ -114,7 +114,7 @@ function FormView() {
   return (
     <div className="container my-5">
       <ToastContainer position="top-right" autoClose={3000} />
-      <h2 className="text-center text-primary mb-4">{formData.title}</h2>
+      <h2 className="text-center text-dark mb-4">{formData.title}</h2>
 
       {(mode === "fill" || mode === "filled") && (
         <p className="text-center text-muted mb-4">
