@@ -168,7 +168,7 @@ const FormList: FC<FormListProps> = ({ mode = "created" }) => {
                   <div className="card-body d-flex flex-column justify-content-between">
                     <div>
                       <h5 className="card-title text-dark">
-                        {mode === "submitted" ? form.formId.title : form.title}
+                        {mode === "submitted" ? form.formId?.title : form.title}
                       </h5>
                       <p className="card-text">
                         <small className="text-muted">

@@ -19,6 +19,10 @@ const FormSchema = new mongoose.Schema(
     },
     title: { type: String, required: true },
     fields: { type: [FieldSchema], required: true },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
