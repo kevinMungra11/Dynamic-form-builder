@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Form } from "../models/Forms.model";
+import { Form } from "../models/FormsCreate.model";
 import { formValidationSchema } from "../validators/validators";
 
 export const createForm = async (req: Request, res: Response) => {
