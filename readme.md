@@ -25,18 +25,6 @@ A full-stack dynamic form builder app using **React.js**, **Node.js (Express + T
 
 ## 🧩 Setup Instructions
 
-### Backend
-
 ```bash
-cd backend
-npm install
-npm run dev
-```
-
-### Frontend
-
-```bash
-cd frontend
-npm install
-npm run dev
+docker-compose up --build
 ```
