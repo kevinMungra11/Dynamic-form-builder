@@ -3,6 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import { type Field, type ApiResponse } from "../types/form";
 import API from "../api/axiosConfig";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 function CreateForm() {
   const [title, setTitle] = useState<string>("");
@@ -28,7 +30,7 @@ function CreateForm() {
   }, [formId]);
 
   const addField = (type: "text" | "checkbox"): void => {
-    setFields([...fields, { label: "", type: type, required: false }]);
+    setFields([...fields, { label: "", type, required: false }]);
     toast.info(`Added a new ${type} field.`);
   };
 
@@ -59,13 +61,28 @@ function CreateForm() {
       toast.error("Form title is required.");
       return;
     }
+
     if (fields.length === 0) {
       toast.error("Please add at least one field.");
       return;
     }
+
     const emptyFieldLabels = fields.some((field) => !field.label.trim());
     if (emptyFieldLabels) {
       toast.error("All field labels must be provided.");
+      return;
+    }
+
+    const labelSet = new Set<string>();
+    const hasDuplicate = fields.some((field) => {
+      const lowerLabel = field.label.trim().toLowerCase();
+      if (labelSet.has(lowerLabel)) return true;
+      labelSet.add(lowerLabel);
+      return false;
+    });
+
+    if (hasDuplicate) {
+      toast.error("Field labels must be unique.");
       return;
     }
 
@@ -73,7 +90,7 @@ function CreateForm() {
       if (isEditMode) {
         await API.patch(`/forms/${formId}`, { title, fields });
         toast.success("Form updated successfully!");
-        setTimeout(() => navigate(`/`), 1500);
+        setTimeout(() => navigate(`/`), 150);
       } else {
         await API.post<ApiResponse>("/forms", {
           title,
@@ -82,7 +99,7 @@ function CreateForm() {
         toast.success("Form created successfully!");
         setTitle("");
         setFields([]);
-        setTimeout(() => navigate(`/`), 1500);
+        setTimeout(() => navigate(`/`), 150);
       }
     } catch (error: any) {
       console.error(
@@ -95,10 +112,12 @@ function CreateForm() {
 
   return (
     <div className="container my-5">
-      <h2 className="mb-4 text-center text-primary">
-        {isEditMode ? "Edit Form" : "Create New Form"}
+      <h2 className="text-center text-success mb-4 fw-bold">
+        {isEditMode ? "Edit Your Form" : "Create a New Form"}
       </h2>
+
       <ToastContainer position="top-right" autoClose={3000} />
+
       <form
         onSubmit={handleSubmit}
         className="p-4 border rounded shadow-sm bg-light"
@@ -120,28 +139,25 @@ function CreateForm() {
           />
         </div>
 
-        <h3 className="mt-5 mb-4 text-center text-secondary border-bottom pb-2">
-          Form Fields
-        </h3>
+        <h4 className="mb-3 mt-4 text-secondary text-center border-bottom pb-2">
+          Form Fields ({fields.length})
+        </h4>
 
         {fields.length === 0 && (
           <p className="text-muted text-center py-3 border rounded bg-white">
-            No fields added yet. Click a button below to add one!
+            No fields added yet. Use the buttons below to add one!
           </p>
         )}
 
-        <div className="list-group mb-4">
-          {fields.map((field, index) => (
-            <div
-              key={index}
-              className="list-group-item d-flex flex-column flex-md-row align-items-md-center justify-content-between p-3 mb-3 shadow-sm rounded-lg border"
-            >
-              <div className="flex-grow-1 me-md-3 mb-2 mb-md-0">
+        {fields.map((field, index) => (
+          <div key={index} className="card mb-4 border shadow-sm">
+            <div className="card-body d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+              <div className="flex-grow-1">
                 <label
                   htmlFor={`fieldLabel-${index}`}
-                  className="form-label text-muted"
+                  className="form-label fw-semibold"
                 >
-                  Field Label:
+                  Field Label
                 </label>
                 <input
                   type="text"
@@ -149,68 +165,65 @@ function CreateForm() {
                   name="label"
                   value={field.label}
                   onChange={(e) => handleFieldChange(index, e)}
-                  placeholder={`Enter label for ${
-                    field.type === "text" ? "Text Input" : "Checkbox"
-                  } field`}
-                  required
                   className="form-control"
+                  placeholder={`Label for ${field.type}`}
                 />
               </div>
 
-              <div className="d-flex align-items-center me-md-3 mb-2 mb-md-0">
-                <span className="badge bg-primary text-white me-2 py-2 px-3">
+              <div className="d-flex flex-column align-items-start">
+                <span className="badge bg-secondary mb-2">
                   {field.type === "text" ? "Text Input" : "Checkbox"}
                 </span>
-              </div>
 
-              <div className="form-check form-switch me-md-3 mb-2 mb-md-0 d-flex align-items-center">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  id={`requiredSwitch-${index}`}
-                  name="required"
-                  checked={field.required}
-                  onChange={(e) => handleFieldChange(index, e)}
-                />
-                <label
-                  className="form-check-label ms-2 text-dark"
-                  htmlFor={`requiredSwitch-${index}`}
-                >
-                  Required
-                </label>
+                <div className="form-check form-switch">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id={`requiredSwitch-${index}`}
+                    name="required"
+                    checked={field.required}
+                    onChange={(e) => handleFieldChange(index, e)}
+                  />
+                  <label
+                    className="form-check-label ms-2"
+                    htmlFor={`requiredSwitch-${index}`}
+                  >
+                    Required
+                  </label>
+                </div>
               </div>
 
               <button
                 type="button"
+                className="btn btn-outline-danger mt-2 mt-md-0"
                 onClick={() => removeField(index)}
-                className="btn btn-outline-danger btn-sm mt-2 mt-md-0"
               >
-                Remove
+                <i className="bi bi-trash3-fill me-2"></i> Remove
               </button>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
 
-        <div className="d-flex justify-content-center gap-3 mb-5">
+        <div className="d-flex justify-content-center gap-3 mb-4">
           <button
             type="button"
             onClick={() => addField("text")}
-            className="btn btn-info btn-lg flex-grow-1"
+            className="btn btn-outline-primary px-4 py-2 d-flex align-items-center gap-2"
           >
-            <i className="bi bi-input-text me-2"></i> Add Text Input
+            <i className="bi bi-input-cursor-text"></i> Text Input
           </button>
           <button
             type="button"
             onClick={() => addField("checkbox")}
-            className="btn btn-secondary btn-lg flex-grow-1"
+            className="btn btn-outline-secondary px-4 py-2 d-flex align-items-center gap-2"
           >
-            <i className="bi bi-check-square me-2"></i> Add Checkbox
+            <i className="bi bi-check2-square"></i> Checkbox
           </button>
         </div>
 
-        <div className="d-grid gap-2">
-          <button type="submit" className="btn btn-success btn-lg">
-            <i className="bi bi-plus-circle me-2"></i>{" "}
+        <div className="d-grid">
+          <button type="submit" className="btn btn-success btn-lg shadow">
+            <i className="bi bi-send-plus-fill me-2"></i>
             {isEditMode ? "Update Form" : "Create Form"}
           </button>
         </div>

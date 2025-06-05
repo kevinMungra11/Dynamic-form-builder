@@ -28,7 +28,7 @@ export const getAllForms = async (req: Request, res: Response) => {
     const skip = (page - 1) * limit;
 
     const total = await Form.countDocuments();
-    const forms = await Form.find().skip(skip).limit(limit);
+    const forms = await Form.find({ isDeleted: false }).skip(skip).limit(limit);
 
     res.status(200).json({
       page,
@@ -91,7 +91,7 @@ export const editForm = async (req: Request, res: Response) => {
 export const deleteForm = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const deletedForm = await Form.findByIdAndDelete(id);
+    const deletedForm = await Form.findByIdAndUpdate(id, { isDeleted: true });
 
     if (!deletedForm) {
       res.status(404).json({ message: "Form not found" });
