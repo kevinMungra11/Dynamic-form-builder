@@ -10,7 +10,7 @@ export const createSubmission = async (req: Request, res: Response) => {
       abortEarly: false,
     });
     if (error) {
-      return res
+      res
         .status(400)
         .json({ message: "Validation error", details: error.details });
     }
@@ -23,10 +23,10 @@ export const createSubmission = async (req: Request, res: Response) => {
       responses,
     });
 
-    return res.status(201).json(submission);
+    res.status(201).json(submission);
   } catch (error: any) {
     console.error(error.message);
-    return res.status(500).json({ message: "Something went wrong!" });
+    res.status(500).json({ message: "Something went wrong!" });
   }
 };
 
@@ -42,7 +42,7 @@ export const getSubmissionsByFormId = async (req: Request, res: Response) => {
       .skip(skip)
       .limit(limit);
 
-    return res.status(200).json({
+    res.status(200).json({
       page,
       limit,
       total,
@@ -51,7 +51,7 @@ export const getSubmissionsByFormId = async (req: Request, res: Response) => {
     });
   } catch (error: any) {
     console.error(error.message);
-    return res.status(500).json({ message: "Something went wrong!" });
+    res.status(500).json({ message: "Something went wrong!" });
   }
 };
 
@@ -69,7 +69,7 @@ export const getAllSubmissions = async (req: Request, res: Response) => {
       .populate("formId", "title")
       .lean();
 
-    return res.status(200).json({
+    res.status(200).json({
       page,
       limit,
       total,
@@ -78,7 +78,7 @@ export const getAllSubmissions = async (req: Request, res: Response) => {
     });
   } catch (error: any) {
     console.error(error.message);
-    return res.status(500).json({ message: "Something went wrong!" });
+    res.status(500).json({ message: "Something went wrong!" });
   }
 };
 
@@ -88,13 +88,13 @@ export const getSubmissionById = async (req: Request, res: Response) => {
     const submission = await FormSubmission.findById(submissionId);
 
     if (!submission) {
-      return res.status(404).json({ message: "Submission not found" });
+      res.status(404).json({ message: "Submission not found" });
     }
 
-    return res.status(200).json(submission);
+    res.status(200).json(submission);
   } catch (error: any) {
     console.error(error.message);
-    return res.status(500).json({ message: "Something went wrong!" });
+    res.status(500).json({ message: "Something went wrong!" });
   }
 };
 
@@ -106,12 +106,12 @@ export const deleteSubmission = async (req: Request, res: Response) => {
     );
 
     if (!deletedSubmission) {
-      return res.status(404).json({ message: "Submission not found" });
+      res.status(404).json({ message: "Submission not found" });
     }
 
-    return res.status(200).json({ message: "Submission deleted successfully" });
+    res.status(200).json({ message: "Submission deleted successfully" });
   } catch (error: any) {
     console.error(error.message);
-    return res.status(500).json({ message: "Something went wrong!" });
+    res.status(500).json({ message: "Something went wrong!" });
   }
 };

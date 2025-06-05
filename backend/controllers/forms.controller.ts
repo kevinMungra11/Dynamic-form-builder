@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Form } from "../models/forms.model";
+import { Form } from "../models/Forms.model";
 import { formValidationSchema } from "../validators/validators";
 
 export const createForm = async (req: Request, res: Response) => {
@@ -8,16 +8,16 @@ export const createForm = async (req: Request, res: Response) => {
       abortEarly: false,
     });
     if (error) {
-      return res
+      res
         .status(400)
         .json({ message: "Validation error", details: error.details });
     }
 
     const form = await Form.create(value);
-    return res.status(201).json(form);
+    res.status(201).json(form);
   } catch (error: any) {
     console.log(error.message);
-    return res.status(500).json({ message: "Something went wrong!" });
+    res.status(500).json({ message: "Something went wrong!" });
   }
 };
 
@@ -30,7 +30,7 @@ export const getAllForms = async (req: Request, res: Response) => {
     const total = await Form.countDocuments();
     const forms = await Form.find().skip(skip).limit(limit);
 
-    return res.status(200).json({
+    res.status(200).json({
       page,
       limit,
       total,
@@ -39,7 +39,7 @@ export const getAllForms = async (req: Request, res: Response) => {
     });
   } catch (error: any) {
     console.log(error.message);
-    return res.status(500).json({ message: "Something went wrong!" });
+    res.status(500).json({ message: "Something went wrong!" });
   }
 };
 
@@ -50,13 +50,13 @@ export const getFormById = async (req: Request, res: Response) => {
     const form = await Form.findById(id);
 
     if (!form) {
-      return res.status(404).json({ message: "Form not found" });
+      res.status(404).json({ message: "Form not found" });
     }
     console.log(form);
-    return res.status(200).json(form);
+    res.status(200).json(form);
   } catch (error: any) {
     console.log(error.message);
-    return res.status(500).json({ message: "Something went wrong!" });
+    res.status(500).json({ message: "Something went wrong!" });
   }
 };
 
@@ -68,7 +68,7 @@ export const editForm = async (req: Request, res: Response) => {
       abortEarly: false,
     });
     if (error) {
-      return res
+      res
         .status(400)
         .json({ message: "Validation error", details: error.details });
     }
@@ -79,13 +79,13 @@ export const editForm = async (req: Request, res: Response) => {
     });
 
     if (!updatedForm) {
-      return res.status(404).json({ message: "Form not found" });
+      res.status(404).json({ message: "Form not found" });
     }
 
-    return res.status(200).json(updatedForm);
+    res.status(200).json(updatedForm);
   } catch (error: any) {
     console.log(error.message);
-    return res.status(500).json({ message: "Something went wrong!" });
+    res.status(500).json({ message: "Something went wrong!" });
   }
 };
 
@@ -95,12 +95,12 @@ export const deleteForm = async (req: Request, res: Response) => {
     const deletedForm = await Form.findByIdAndDelete(id);
 
     if (!deletedForm) {
-      return res.status(404).json({ message: "Form not found" });
+      res.status(404).json({ message: "Form not found" });
     }
 
-    return res.status(200).json({ message: "Form deleted successfully" });
+    res.status(200).json({ message: "Form deleted successfully" });
   } catch (error: any) {
     console.log(error.message);
-    return res.status(500).json({ message: "Something went wrong!" });
+    res.status(500).json({ message: "Something went wrong!" });
   }
 };
