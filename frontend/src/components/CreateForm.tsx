@@ -90,7 +90,7 @@ function CreateForm() {
       if (isEditMode) {
         await API.patch(`/forms/${formId}`, { title, fields });
         toast.success("Form updated successfully!");
-        setTimeout(() => navigate(`/`), 1500);
+        setTimeout(() => navigate(`/`), 150);
       } else {
         await API.post<ApiResponse>("/forms", {
           title,
@@ -99,7 +99,7 @@ function CreateForm() {
         toast.success("Form created successfully!");
         setTitle("");
         setFields([]);
-        setTimeout(() => navigate(`/`), 1500);
+        setTimeout(() => navigate(`/`), 150);
       }
     } catch (error: any) {
       console.error(

@@ -99,7 +99,7 @@ function FormView() {
         responses,
       });
       toast.success("Form submitted successfully!");
-      setTimeout(() => navigate("/"), 1500);
+      setTimeout(() => navigate("/"), 500);
     } catch (error) {
       console.error("Submit error:", error);
       toast.error("Submission failed.");
@@ -167,6 +167,10 @@ function FormView() {
           } else if (field.type === "checkbox") {
             return (
               <div key={idx} className="mb-4 form-check">
+                <label className="form-check-label" htmlFor={`checkbox-${idx}`}>
+                  {field.label}
+                  {field.required && <span className="text-danger">*</span>}
+                </label>
                 <input
                   type="checkbox"
                   className="form-check-input"
@@ -175,9 +179,6 @@ function FormView() {
                   checked={Boolean(value)}
                   onChange={(e) => handleChange(field.label, e.target.checked)}
                 />
-                <label className="form-check-label" htmlFor={`checkbox-${idx}`}>
-                  {mode === "fill" ? "Tick if applicable" : "Checkbox"}
-                </label>
               </div>
             );
           }
