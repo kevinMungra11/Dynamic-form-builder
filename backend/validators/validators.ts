@@ -20,5 +20,21 @@ export const fieldValidationSchema = Joi.object({
 export const formValidationSchema = Joi.object({
   _id: Joi.string(),
   title: Joi.string().required(),
-  fields: Joi.array().items(fieldValidationSchema).min(1).required(),
+  fields: Joi.array()
+    .items(fieldValidationSchema)
+    .min(1)
+    .required()
+    .custom((fields, helpers) => {
+      const labelSet = new Set();
+      for (const field of fields) {
+        const lowerLabel = field.label.trim().toLowerCase();
+        if (labelSet.has(lowerLabel)) {
+          return helpers.error("any.invalid", {
+            message: `Duplicate field label "${field.label}" found.`,
+          });
+        }
+        labelSet.add(lowerLabel);
+      }
+      return fields;
+    }, "Unique Field Labels Validation"),
 });

@@ -59,13 +59,28 @@ function CreateForm() {
       toast.error("Form title is required.");
       return;
     }
+
     if (fields.length === 0) {
       toast.error("Please add at least one field.");
       return;
     }
+
     const emptyFieldLabels = fields.some((field) => !field.label.trim());
     if (emptyFieldLabels) {
       toast.error("All field labels must be provided.");
+      return;
+    }
+
+    const labelSet = new Set<string>();
+    const hasDuplicate = fields.some((field) => {
+      const lowerLabel = field.label.trim().toLowerCase();
+      if (labelSet.has(lowerLabel)) return true;
+      labelSet.add(lowerLabel);
+      return false;
+    });
+
+    if (hasDuplicate) {
+      toast.error("Field labels must be unique.");
       return;
     }
 
@@ -95,7 +110,7 @@ function CreateForm() {
 
   return (
     <div className="container my-5">
-      <h2 className="mb-4 text-center text-primary">
+      <h2 className="mb-4 text-center text-dark">
         {isEditMode ? "Edit Form" : "Create New Form"}
       </h2>
       <ToastContainer position="top-right" autoClose={3000} />
