@@ -31,3 +31,8 @@ A full-stack dynamic form builder app using **React.js**, **Node.js (Express + T
 cd backend
 npm install
 npm run dev
+
+```bash
+cd frontend
+npm install
+npm run dev
